@@ -1,0 +1,213 @@
+work environment setup link: 
+http://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/
+
+camera module setup link : http://www.pyimagesearch.com/2015/03/30/accessing-the-raspberry-pi-camera-with-opencv-and-python/
+
+
+***
+Screen Shot: 
+	pi@raspberrypi:~ $ sudo scrot -d10 
+***
+
+***First Link Turotial execution starts here***
+1) expanding file system : sudo raspi-config
+
+2) uninstall wolfram-engine for mor space : sudo apt-get purge wolfram-engine
+
+3) install cmake package to control compilation process: 
+	sudo apt-get install build-essential cmake pkg-config
+
+4) install some image i/o package to work on jpeg, tiff5 , png12
+	sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
+
+5) install some video i/o package(codec) av, swscale , 4l , vidcore , x264
+	sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+
+libavcodec56 libavformat56 libavresample-dev libavresample2 libavutil-dev libavutil54 libswscale3
+
+sudo apt-get install libxvidcore-dev libx264-dev
+package installed: libx264-dev libxvidcore-dev
+
+
+6) opencv submodule 'highgui' to display images and to build basic gui, to compile highgui GTK development library is required
+	sudo apt-get install libgtk2.0-dev
+
+package installed: 
+  autopoint debhelper gettext gir1.2-gtk-2.0 intltool-debian libasprintf-dev libatk1.0-dev libcairo-script-   interpreter2        libcairo2-dev libfontconfig1-dev
+  libgdk-pixbuf2.0-dev libgettextpo-dev libgettextpo0 libglib2.0-dev libharfbuzz-dev libharfbuzz-gobject0 libice-dev libmail-sendmail-perl libpango1.0-dev
+  libpcre3-dev libpcrecpp0 libpixman-1-dev libpthread-stubs0-dev libsm-dev libsys-hostname-long-perl libunistring0 libx11-dev libx11-doc libxau-dev
+  libxcb-render0-dev libxcb-shm0-dev libxcb1-dev libxcomposite-dev libxcursor-dev libxdamage-dev libxdmcp-dev libxext-dev libxfixes-dev libxft-dev libxi-dev
+  libxinerama-dev libxml2-utils libxrandr-dev libxrender-dev po-debconf x11proto-composite-dev x11proto-core-dev x11proto-damage-dev x11proto-fixes-dev
+  x11proto-input-dev x11proto-kb-dev x11proto-randr-dev x11proto-render-dev x11proto-xext-dev x11proto-xinerama-dev xorg-sgml-doctools xtrans-dev
+
+
+7) to optimize matrix operation on a resource contraind device sush as raspberry pi we need a library 
+	sudo apt-get install libatlas-base-dev gfortran
+	package installed : gfortran-4.9 libatlas-dev libatlas3-base libblas-dev libgfortran-4.9-dev
+
+8) installing python 2.7 and 3.0 
+	sudo apt-get install python2.7-dev python3-dev
+	python 3.0 is manually installed 
+	python 2.7 is installed seperately
+
+9) download 
+	opencv_contrib-3.1.0.zip
+	https://codeload.github.com/opencv/opencv_contrib/zip/3.1.0 **extension**
+	wget -O opencv.zip https://github.com/opencv/archive/3.1.0
+        
+	opencv-3.1.0.zip **original source**
+	https://codeload.github.com/opencv/opencv/zip/3.1.0
+	
+	Then unzip (folder name)
+
+10) install python package manager pip
+	wget https://bootstrap.pypa.io/get-pip.py
+	sudo python get-pip.py
+
+11) install virtualenv and virtualenvwrapper for python virtual environment
+	sudo pip install virtualenv virtualenvwrapper
+	sudo rm ~rf/.cache/pip
+	
+12) setting up the environment , go to directory pi(show hidden files) > .profile , edit it as , 
+	#virtualenv and virtualenvwrapper
+	export WORKON_HOME=$HOME/.virtualenvs
+	source /usr/local/bin/virtualenvwrapper.sh
+
+13) check virtual environmnet setup , 
+	source ~/.profile
+
+	(for python 3.4.x: )
+14) create python virtual environment 
+	mkvirtualenv cv -p python2 ( Python 2.7.x)
+	mkvirtualenv cvp3 -p python3 ( Python 3.x)
+
+15) to switch to any pre-created virtual environment just type 
+	source ~/.profile // to invoke bash script 
+	workon cv(environment name you created earlier) 
+		
+16) testing cmake 
+	cd ~/opencv-3.1.0/
+	mkdir build 
+	cd build 
+	cmake -D CMAKE_BUILD_TYPE=RELEASE  \
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+	-D INSTALL_PYTHON_EXAMPLES=ON \
+	-D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib-3.1.0/modules \
+	-D BUILD_EXAMPLES=ON ..
+
+17)  compiling build -> opencv-3.1.0 + opencv_contrib-3.1.0, using four cores of raspberry (j4)
+	make -j4 
+
+18) 	installing compiled build of opencv-3.1.0 and opencv_contrib-3.1.0 
+	sudo make install 
+	sudo ldconfig
+
+
+19)    finishing installation for python 2.7.x
+	a) checking opencv is installed correcty in folder site-packages or dist-packages 
+		ls -l /usr/local/lib/python2.7/site-packages/
+		(output will be following: )
+		total 1852
+		-rw-r--r-- 1 root staff 1896428 Nov 27 14:22 cv2.so
+
+	b) sym-link or linking OpenCV bindings into our cv virtual environment for python 2.7 
+		cd ~/.virtualenvs/cv/lib/python2.7/site-packages/
+		pi@raspberrypi:~/.virtualenvs/cv/lib/python2.7/site-packages $ ln -s /usr/local/lib/python2.7/site-packages/cv2.so cv2.so
+
+20) finishing installation for python 3.4.x
+     a) checking opencv is installed correctly in folder site-packages or dist-packages
+	
+	ls -l /usr/local/lib/python3.4/site-packages/
+	(output will be following: )
+	total 1852
+	-rw-r--r-- 1 root staff 1895900 Nov 27 14:22 cv2.cpython-34m.so
+	(renaming the file to cv2.so: )
+	sudo mv cv2.cpython-34m.so cv2.so
+
+     b) linking opencv binding with cvp3 virtual environment cv2.so
+
+	 cd ~/.virtualenvs/cvp3/lib/python3.4/site-packages/
+	 ln -s /usr/local/lib/python3.4/site-packages/cv2.so cv2.so
+
+21) checking if opencv3 is installed successfully on rp3 
+	
+	(python 2.7.x)
+	pi@raspberrypi:~ $source ~/.profile
+	pi@raspberrypi:~ $ workon cv
+	(cv) pi@raspberrypi:~ $ python
+	>>> import cv2
+	>>> cv2.__version__
+
+	(for python 3.4.x: )
+	pi@raspberrypi:~ $ source ~/.profile
+	pi@raspberrypi:~ $ workon cvp3
+	(cvp3) pi@raspberrypi:~$ python
+	>>>import cv2
+	>>>cv2.__version__
+***First Link Turotial execution Ends here***
+
+
+
+
+
+***Second Link Turotial execution starts here***
+raspberry pi camera module: 
+1)  installing raspberry picamera-version.x using pip package manager,
+ 
+	(cv) pi@raspberrypi:~ $ pip install "picamera[array]"
+	output: Successfully installed picamera-1.12
+		(¨array¨ is a sub-module of picamera which helps to utilize opencv, using python binding OpenCV represents
+		  images as NumPy arrays and array submodule allows us to achieve those arrays from camera module )
+	output:
+		Requirement already satisfied: picamera[array] in ./.virtualenvs/cv/lib/python2.7/site-packages
+		Requirement already satisfied: numpy; extra == "array" in ./.virtualenvs/cv/lib/python2.7/site-packages (from picamera[array])
+
+
+ 
+
+2)   	Enable Camera interface:
+	pi@raspberrypi:~ $ sudo raspi-config
+		enable camera
+
+3)	Checking the camera module if it works:
+		pi@raspberrypi:~ $ raspistill -o check.jpg
+
+4) 	Installing imutils for image processing convenience
+	(cv) pi@raspberrypi:~ $ pip install imutils
+		Collecting imutils
+  		Downloading imutils-0.3.8.tar.gz
+		Building wheels for collected packages: imutils
+  		Running setup.py bdist_wheel for imutils ... done
+  		Stored in directory: /home/pi/.cache/pip/wheels/22/a8/47/bc0ef5224a9b96b7e0465d4125672b7f97da6e96b3cb16b6c7
+		Successfully built imutils
+		Installing collected packages: imutils
+			Successfully installed imutils-0.3.8
+
+
+****
+Mail feature installations: 
+	1) Install Two packages First
+		SMTP : sudo apt-get install ssmtp
+		MailUtils: sudo apt-get install mailutils
+	2) Cinfiguring email feature:
+
+		sudo nano /etc/ssmtp/ssmtp.conf
+		edit this file as follows: 
+
+		root=sp1aiub@gmail.com
+		mailhub=smtp.gmail.com:587
+		hostname=raspberrypi
+		AuthUser=sp1aiub@gmail.com
+		AuthPass=
+		FromLineOverride=YES
+		UseSTARTTLS=YES
+		UseTLS=YES
+
+	***(Allow less secure app permission from your e-mail dashboard)
+
+****
+vischiq
+sudo usermod -a -G video www-data
+
+
+
