@@ -156,7 +156,7 @@ raspberry pi camera module:
  
 	(cv) pi@raspberrypi:~ $ pip install "picamera[array]"
 	output: Successfully installed picamera-1.12
-		(¨array¨ is a sub-module of picamera which helps to utilize opencv, using python binding OpenCV represents
+		(Â¨arrayÂ¨ is a sub-module of picamera which helps to utilize opencv, using python binding OpenCV represents
 		  images as NumPy arrays and array submodule allows us to achieve those arrays from camera module )
 	output:
 		Requirement already satisfied: picamera[array] in ./.virtualenvs/cv/lib/python2.7/site-packages
@@ -194,11 +194,11 @@ Mail feature installations:
 		sudo nano /etc/ssmtp/ssmtp.conf
 		edit this file as follows: 
 
-		root=sp1aiub@gmail.com
+		root=email@gmail.com
 		mailhub=smtp.gmail.com:587
 		hostname=raspberrypi
-		AuthUser=sp1aiub@gmail.com
-		AuthPass=
+		AuthUser=email@gmail.com
+		AuthPass="password"
 		FromLineOverride=YES
 		UseSTARTTLS=YES
 		UseTLS=YES
